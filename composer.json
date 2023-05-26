@@ -1,0 +1,39 @@
+{
+    "name": "yii1tech/config",
+    "description": "Provides support for Yii2 application runtime configuration",
+    "keywords": ["yii1", "configuration", "config", "runtime", "persistent", "database"],
+    "license": "BSD-3-Clause",
+    "support": {
+        "issues": "https://github.com/yii1tech/config/issues",
+        "wiki": "https://github.com/yii1tech/config/wiki",
+        "source": "https://github.com/yii1tech/config"
+    },
+    "authors": [
+        {
+            "name": "Paul Klimov",
+            "email": "klimov.paul@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.1",
+        "yiisoft/yii": "~1.1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.0 || ^7.0 || ^8.0 || ^9.3 || ^10.0.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "yii1tech\\config\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "yii1tech\\config\\test\\": "tests"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}
