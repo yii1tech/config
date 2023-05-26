@@ -5,7 +5,7 @@ namespace yii1tech\config\test;
 use Yii;
 use yii1tech\config\Item;
 use yii1tech\config\Manager;
-use yii1tech\config\StoragePhp;
+use yii1tech\config\StorageArray;
 
 class ManagerTest extends TestCase
 {
@@ -52,8 +52,7 @@ class ManagerTest extends TestCase
         $config = [
             'class' => Manager::class,
             'storage' => [
-                'class' => StoragePhp::class,
-                'fileName' => $this->getTestFileName(),
+                'class' => StorageArray::class,
             ],
         ];
 
@@ -73,7 +72,7 @@ class ManagerTest extends TestCase
         $manager->setItems($items);
         $this->assertEquals($items, $manager->getItems(), 'Unable to setup items!');
 
-        $storage = new StoragePhp();
+        $storage = new StorageArray();
         $manager->setStorage($storage);
         $this->assertEquals($storage, $manager->getStorage(), 'Unable to setup storage!');
     }

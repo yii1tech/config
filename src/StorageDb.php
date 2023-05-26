@@ -2,6 +2,7 @@
 
 namespace yii1tech\config;
 
+use CDbCriteria;
 use Yii;
 
 /**
@@ -24,7 +25,8 @@ use Yii;
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 1.0
  */
-class StorageDb extends Storage {
+class StorageDb extends Storage
+{
     /**
      * @var string id of the database connection application component.
      */
@@ -33,6 +35,14 @@ class StorageDb extends Storage {
      * @var string name of the table, which should store values.
      */
     public $table = 'app_config';
+    /**
+     * @var string name of the column, which should store config item key.
+     */
+    public $keyColumn = 'id';
+    /**
+     * @var string name of the column, which should store config item value.
+     */
+    public $valueColumn = 'value';
 
     /**
      * @return \CDbConnection database connection application component.
@@ -47,22 +57,36 @@ class StorageDb extends Storage {
      */
     public function save(array $values): bool
     {
-        $this->clear();
+        $existingValues = $this->get();
 
-        $data = [];
-        foreach ($values as $id => $value) {
-            $data[] = array(
-                'id' => $id,
-                'value' => $value,
-            );
+        foreach ($values as $key => $value) {
+            if (array_key_exists($key, $existingValues)) {
+                if ($value === $existingValues[$key]) {
+                    continue;
+                }
+
+                $criteria = new CDbCriteria();
+                $criteria->addColumnCondition([$this->keyColumn => $key]);
+                $data = [$this->valueColumn => $value];
+
+                $this->getDbConnection()
+                    ->getCommandBuilder()
+                    ->createUpdateCommand($this->table, $data, $criteria)
+                    ->execute();
+            } else {
+                $data = [
+                    $this->keyColumn => $key,
+                    $this->valueColumn => $value,
+                ];
+
+                $this->getDbConnection()
+                    ->getCommandBuilder()
+                    ->createInsertCommand($this->table, $data)
+                    ->execute();
+            }
         }
 
-        $insertedRowsCount = $this->getDbConnection()
-            ->getCommandBuilder()
-            ->createMultipleInsertCommand($this->table, $data)
-            ->execute();
-
-        return (count($values) == $insertedRowsCount);
+        return true;
     }
 
     /**
@@ -76,7 +100,7 @@ class StorageDb extends Storage {
 
         $values = [];
         foreach ($rows as $row) {
-            $values[$row['id']] = $row['value'];
+            $values[$row[$this->keyColumn]] = $row[$this->valueColumn];
         }
 
         return $values;
@@ -87,7 +111,24 @@ class StorageDb extends Storage {
      */
     public function clear(): bool
     {
-        $this->getDbConnection()->createCommand()->delete($this->table);
+        $this->getDbConnection()
+            ->createCommand()
+            ->delete($this->table);
+
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function clearValue($key): bool
+    {
+        $criteria = new CDbCriteria();
+        $criteria->addColumnCondition([$this->keyColumn => $key]);
+
+        $this->getDbConnection()
+            ->createCommand()
+            ->delete($this->table, $criteria->condition, $criteria->params);
 
         return true;
     }

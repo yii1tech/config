@@ -74,24 +74,13 @@ class StoragePhpTest extends TestCase
         ];
         $this->assertTrue($storage->save($values), 'Unable to save values!');
         $this->assertFileExists($storage->getFileName(), 'Unable to create file!');
+
+        $returnedValues = $storage->get();
+        $this->assertEquals($values, $returnedValues);
     }
 
     /**
      * @depends testSave
-     */
-    public function testGet(): void
-    {
-        $storage = $this->createTestStorage();
-        $values = [
-            'name1' => 'value1',
-            'name2' => 'value2',
-        ];
-        $storage->save($values);
-        $this->assertEquals($values, $storage->get(), 'Unable to get values!');
-    }
-
-    /**
-     * @depends testGet
      */
     public function testClear(): void
     {
@@ -103,6 +92,26 @@ class StoragePhpTest extends TestCase
         $storage->save($values);
 
         $this->assertTrue($storage->clear(), 'Unable to clear values!');
-        $this->assertEquals([], $storage->get(), 'Values are not cleared!');
+        $this->assertEmpty($storage->get(), 'Values are not cleared!');
+    }
+
+    /**
+     * @depends testSave
+     */
+    public function testClearValue()
+    {
+        $storage = $this->createTestStorage();
+        $values = [
+            'test.name' => 'Test name',
+            'test.title' => 'Test title',
+        ];
+
+        $storage->save($values);
+        $storage->clearValue('test.name');
+
+        $returnedValues = $storage->get();
+
+        $this->assertFalse(array_key_exists('test.name', $returnedValues));
+        $this->assertTrue(array_key_exists('test.title', $returnedValues));
     }
 }

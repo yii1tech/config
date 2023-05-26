@@ -44,4 +44,14 @@ class StorageArray extends Storage
 
         return true;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function clearValue($key): bool
+    {
+        unset($this->data[$key]);
+
+        return true;
+    }
 }

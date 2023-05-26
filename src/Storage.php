@@ -30,4 +30,12 @@ abstract class Storage extends CApplicationComponent
      * @return bool success.
      */
     abstract public function clear(): bool;
+
+    /**
+     * Clear saved value for the specified item.
+     *
+     * @param string|int $key the key of the item to be cleared.
+     * @return bool success.
+     */
+    abstract public function clearValue($key): bool;
 }

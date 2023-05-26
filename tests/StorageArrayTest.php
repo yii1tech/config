@@ -72,4 +72,23 @@ class StorageArrayTest extends TestCase
 
         $this->assertEmpty($this->storage->get());
     }
+
+    /**
+     * @depends testSave
+     */
+    public function testClearValue()
+    {
+        $values = [
+            'test.name' => 'Test name',
+            'test.title' => 'Test title',
+        ];
+
+        $this->storage->save($values);
+        $this->storage->clearValue('test.name');
+
+        $returnedValues = $this->storage->get();
+
+        $this->assertFalse(array_key_exists('test.name', $returnedValues));
+        $this->assertTrue(array_key_exists('test.title', $returnedValues));
+    }
 }

@@ -12,7 +12,8 @@ use Yii;
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 1.0
  */
-class StoragePhp extends Storage {
+class StoragePhp extends Storage
+{
     /**
      * @var string name of the file, which should be used to store values.
      */
@@ -55,17 +56,9 @@ class StoragePhp extends Storage {
      */
     public function save(array $values): bool
     {
-        $this->clear();
+        $values = array_merge($this->get(), $values);
 
-        $fileName = $this->getFileName();
-
-        $dirName = dirname($fileName);
-        if (!file_exists($dirName)) {
-            mkdir($dirName, 0777, true);
-        }
-
-        $bytesWritten = file_put_contents($fileName, $this->composeFileContent($values));
-        $this->invalidateScriptCache($fileName);
+        $bytesWritten = $this->saveToFile($values);
 
         return ($bytesWritten > 0);
     }
@@ -96,6 +89,43 @@ class StoragePhp extends Storage {
         }
 
         return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function clearValue($key): bool
+    {
+        $values = $this->get();
+        if (empty($values)) {
+            return true;
+        }
+
+        unset($values[$key]);
+
+        $bytesWritten = $this->saveToFile($values);
+
+        return ($bytesWritten > 0);
+    }
+
+    /**
+     * Saves given values to the file.
+     * @param array $values values to be saved.
+     * @return int number of bytes written.
+     */
+    protected function saveToFile(array $values)
+    {
+        $fileName = $this->getFileName();
+
+        $dirName = dirname($fileName);
+        if (!file_exists($dirName)) {
+            mkdir($dirName, 0777, true);
+        }
+
+        $bytesWritten = file_put_contents($fileName, $this->composeFileContent($values));
+        $this->invalidateScriptCache($fileName);
+
+        return $bytesWritten;
     }
 
     /**
