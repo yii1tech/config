@@ -89,6 +89,12 @@ class Manager extends CApplicationComponent
      * Set this parameter to a negative integer to aviod caching.
      */
     public $cacheDuration = 0;
+    /**
+     * @var object|null configuration source object for the {@see $items}.
+     * If not set current Yii application instance will be used.
+     * @see \yii1tech\config\Item::$source
+     */
+    public $source;
 
     /**
      * @param array|\yii1tech\config\Storage $storage
@@ -187,6 +193,7 @@ class Manager extends CApplicationComponent
             $config['class'] = Item::class;
         }
         $config['id'] = $id;
+        $config['source'] = $this->source;
 
         return Yii::createComponent($config);
     }
