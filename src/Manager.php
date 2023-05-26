@@ -222,7 +222,7 @@ class Manager extends CApplicationComponent
     {
         foreach ($itemValues as $id => $value) {
             $item = $this->getItem($id);
-            $item->value = $value;
+            $item->setValue($value);
         }
 
         return $this;
@@ -235,7 +235,7 @@ class Manager extends CApplicationComponent
     {
         $itemValues = [];
         foreach ($this->getItems() as $item) {
-            $itemValues[$item->id] = $item->value;
+            $itemValues[$item->id] = $item->getValue();
         }
 
         return $itemValues;
@@ -265,39 +265,72 @@ class Manager extends CApplicationComponent
 
     /**
      * Saves the current config item values into the persistent storage.
-     * @return bool success.
+     * @return static self reference.
      */
-    public function saveValues(): bool
+    public function save(): self
     {
-        $result = $this->getStorage()->save($this->getItemValues());
+        $itemValues = [];
+        foreach ($this->getItems() as $item) {
+            $itemValues[$item->id] = $item->serializeValue();
+        }
+
+        $result = $this->getStorage()->save($itemValues);
         if ($result) {
             $this->getCacheComponent()->delete($this->cacheId);
         }
 
-        return $result;
+        return $this;
     }
 
     /**
      * Restores config item values from the persistent storage.
      * @return static self reference.
      */
-    public function restoreValues()
+    public function restore(): self
     {
-        return $this->setItemValues($this->getStorage()->get());
+        $storedValues = $this->getStorage()->get();
+
+        foreach ($this->getItems() as $item) {
+            if (!array_key_exists($item->id, $storedValues)) {
+                continue;
+            }
+
+            $item->unserializeValue($storedValues[$item->id]);
+        }
+
+        return $this;
     }
 
     /**
-     * Clears config item values saved in the persistent storage.
-     * @return bool success.
+     * Clears config item values saved in the persistent storage, restoring original values of the {@see $items}.
+     * @return static self reference.
      */
-    public function clearValues(): bool
+    public function reset(): self
     {
-        $result = $this->getStorage()->clear();
-        if ($result) {
-            $this->getCacheComponent()->delete($this->cacheId);
+        $this->getStorage()->clear();
+        $this->getCacheComponent()->delete($this->cacheId);
+
+        foreach ($this->getItems() as $item) {
+            $item->resetValue();
         }
 
-        return $result;
+        return $this;
+    }
+
+    /**
+     * Clear value, saved in persistent storage, for the specified item, restoring its original value.
+     *
+     * @param string $key the key of the item to be cleared.
+     * @return static self reference.
+     */
+    public function resetValue($key): self
+    {
+        $this->storage->clearValue($key);
+        $this->getCacheComponent()->delete($this->cacheId);
+
+        $this->getItem($key)->resetValue();
+
+        return $this;
     }
 
     /**
@@ -306,12 +339,12 @@ class Manager extends CApplicationComponent
      * This method caches its result for the better performance.
      * @return array application configuration.
      */
-    public function fetchConfig()
+    public function fetchConfig(): array
     {
         $cache = $this->getCacheComponent();
         $config = $cache->get($this->cacheId);
         if ($config === false) {
-            $this->restoreValues();
+            $this->restore();
             $config = $this->composeConfig();
             $cache->set($this->cacheId, $config, $this->cacheDuration);
         }

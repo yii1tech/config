@@ -199,7 +199,7 @@ class ManagerTest extends TestCase
     /**
      * @depends testSetupItemValues
      */
-    public function testStoreValues(): void
+    public function testSave(): void
     {
         $manager = $this->createTestManager();
         $items = [
@@ -212,7 +212,7 @@ class ManagerTest extends TestCase
         ];
         $manager->setItems($items);
 
-        $this->assertTrue($manager->saveValues(), 'Unable to save values!');
+        $manager->save();
         $itemValues = $manager->getItemValues();
 
         $emptyItemValues = [
@@ -221,18 +221,76 @@ class ManagerTest extends TestCase
         ];
 
         $manager->setItemValues($emptyItemValues);
-        $manager->restoreValues();
+        $manager->restore();
         $this->assertEquals($itemValues, $manager->getItemValues(), 'Unable to restore values!');
 
-        $manager->clearValues();
+        $manager->reset();
 
         $manager->setItemValues($emptyItemValues);
         $this->assertEquals($emptyItemValues, $manager->getItemValues(), 'Unable to clear values!');
     }
 
     /**
+     * @depends testSave
+     */
+    public function testReset()
+    {
+        $manager = $this->createTestManager();
+        $items = [
+            'item1' => [
+                'path' => 'params.param1',
+            ],
+            'item2' => [
+                'path' => 'params.param2',
+            ],
+        ];
+        $manager->setItems($items);
+
+        $manager->setItemValues([
+            'item1' => 'new-item1',
+            'item2' => 'new-item2',
+        ]);
+
+        $manager->reset();
+
+        $this->assertSame([], $manager->getStorage()->get());
+
+        $this->assertSame('param1-value', $manager->getItem('item1')->getValue());
+        $this->assertSame('param2-value', $manager->getItem('item2')->getValue());
+    }
+
+    /**
+     * @depends testSave
+     */
+    public function testResetValue()
+    {
+        $manager = $this->createTestManager();
+        $items = [
+            'item1' => [
+                'path' => 'params.param1',
+            ],
+            'item2' => [
+                'path' => 'params.param2',
+            ],
+        ];
+        $manager->setItems($items);
+
+        $manager->setItemValues([
+            'item1' => 'new-item1',
+            'item2' => 'new-item2',
+        ]);
+
+        $manager->resetValue('item2');
+
+        $this->assertSame([], $manager->getStorage()->get());
+
+        $this->assertSame('new-item1', $manager->getItem('item1')->getValue());
+        $this->assertSame('param2-value', $manager->getItem('item2')->getValue());
+    }
+
+    /**
      * @depends testComposeConfig
-     * @depends testStoreValues
+     * @depends testSave
      */
     public function testFetchConfig(): void
     {
@@ -248,7 +306,7 @@ class ManagerTest extends TestCase
             ],
         ];
         $manager->setItems($items);
-        $manager->saveValues();
+        $manager->save();
 
         $manager = $this->createTestManager();
         $manager->setItems($items);
