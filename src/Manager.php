@@ -17,7 +17,7 @@ use Yii;
  * ```php
  * [
  *     'components' => [
- *         'configManager' => [
+ *         'appConfigManager' => [
  *             'class' => yii1tech\config\Manager::class,
  *             'items' => [
  *                 'appName' => [
@@ -36,8 +36,9 @@ use Yii;
  *                 ],
  *             ],
  *         ],
- *         ...
+ *         // ...
  *     ],
+ *     // ...
  * ];
  * ```
  *
@@ -51,6 +52,7 @@ use Yii;
  *
  * @see \yii1tech\config\Item
  * @see \yii1tech\config\Storage
+ * @see \yii1tech\config\ConfiguresAppFromConfigManager
  *
  * @property array[]|\yii1tech\config\Item[]|string[] $items public alias of {@see _items}.
  * @property \yii1tech\config\Storage|array $storage public alias of {@see _storage}.

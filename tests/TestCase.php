@@ -2,7 +2,6 @@
 
 namespace yii1tech\config\test;
 
-use CConsoleApplication;
 use CMap;
 use Yii;
 
@@ -32,7 +31,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
      * @param array $config The application configuration, if needed
      * @param string $appClass name of the application class to create
      */
-    protected function mockApplication($config = [], $appClass = CConsoleApplication::class)
+    protected function mockApplication($config = [], $appClass = DummyApplication::class)
     {
         Yii::setApplication(null);
 
@@ -47,7 +46,14 @@ class TestCase extends \PHPUnit\Framework\TestCase
                 'cache' => [
                     'class' => \CDummyCache::class,
                 ],
+                'format' => [
+                    'dateFormat' => 'Y-m-d',
+                ],
             ],
+            'params' => [
+                'param1' => 'param1-value',
+                'param2' => 'param2-value',
+            ]
         ], $config));
     }
 

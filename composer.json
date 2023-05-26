@@ -1,6 +1,6 @@
 {
     "name": "yii1tech/config",
-    "description": "Provides support for Yii2 application runtime configuration",
+    "description": "Provides support for Yii1 application runtime configuration",
     "keywords": ["yii1", "configuration", "config", "runtime", "persistent", "database"],
     "license": "BSD-3-Clause",
     "support": {
