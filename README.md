@@ -60,14 +60,14 @@ For example:
                     'path' => 'name',
                     'label' => 'Application Name',
                     'rules' => [
-                        ['required']
+                        ['required'],
                     ],
                 ],
                 'dateFormat' => [
                     'path' => 'components.format.dateFormat',
                     'label' => 'HTML representing not set value',
                     'rules' => [
-                        ['required']
+                        ['required'],
                     ],
                 ],
             ],
