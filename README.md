@@ -162,6 +162,7 @@ Following storages are available:
 - [\yii1tech\config\StoragePhp](src/StoragePhp.php) - stores configuration inside PHP files
 - [\yii1tech\config\StorageDb](src/StorageDb.php) - stores configuration inside relational database
 - [\yii1tech\config\StorageActiveRecord](src/StorageActiveRecord.php) - finds configuration using ActiveRecord
+- [\yii1tech\config\StorageArray](src/StorageArray.php) - uses internal array for the config storage, could be useful in unit tests
 
 Please refer to the particular storage class for more details.
 

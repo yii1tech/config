@@ -4,6 +4,7 @@ namespace yii1tech\config\test;
 
 use CMap;
 use Yii;
+use yii1tech\config\test\support\DummyApplication;
 
 class TestCase extends \PHPUnit\Framework\TestCase
 {

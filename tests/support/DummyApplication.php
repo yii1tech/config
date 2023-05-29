@@ -1,6 +1,6 @@
 <?php
 
-namespace yii1tech\config\test;
+namespace yii1tech\config\test\support;
 
 class DummyApplication extends \CApplication
 {
