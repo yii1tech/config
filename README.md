@@ -127,7 +127,7 @@ return [
         'label' => 'Application Name',
         'rules' => [
             ['required'],
-            ['string'],
+            ['length', 'min' => 1],
         ],
     ],
     'nullDisplay' => [
@@ -135,7 +135,7 @@ return [
         'label' => 'Date representation format',
         'rules' => [
             ['required'],
-            ['string'],
+            ['length', 'min' => 1],
         ],
     ],
     'adminEmail' => [
