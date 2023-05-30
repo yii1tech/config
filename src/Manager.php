@@ -104,7 +104,7 @@ class Manager extends CApplicationComponent
     public function setStorage($storage): self
     {
         if (!is_array($storage) && !is_object($storage)) {
-            throw new InvalidArgumentException('"' . get_class($this) . '::storage" should be instance of "' . Storage::class . '" or its array configuration. "' . gettype($storage) . '" given.');
+            throw new InvalidArgumentException('"' . get_class($this) . '::$storage" should be instance of "' . Storage::class . '" or its array configuration. "' . gettype($storage) . '" given.');
         }
         $this->_storage = $storage;
 
@@ -153,9 +153,10 @@ class Manager extends CApplicationComponent
     public function getItems(): array
     {
         $this->normalizeItems();
+
         $items = [];
         foreach ($this->_items as $id => $item) {
-            $items[] = $this->getItem($id);
+            $items[$id] = $this->getItem($id);
         }
 
         return $items;
@@ -216,7 +217,7 @@ class Manager extends CApplicationComponent
                     throw new LogicException('File "' . $this->_items . '" does not exist.');
                 }
             } else {
-                throw new LogicException('"' . get_class($this) . '::items" should be array or file name containing it.');
+                throw new LogicException('"' . get_class($this) . '::$items" should be array or file name containing it.');
             }
         }
     }

@@ -61,24 +61,39 @@ class ManagerTest extends TestCase
 
     // Tests :
 
-    public function testSetGet(): void
+    public function testSetupStorage(): void
     {
         $manager = new Manager();
-
-        $items = [
-            new Item(),
-            new Item(),
-        ];
-        $manager->setItems($items);
-        $this->assertEquals($items, $manager->getItems(), 'Unable to setup items!');
 
         $storage = new StorageArray();
         $manager->setStorage($storage);
         $this->assertEquals($storage, $manager->getStorage(), 'Unable to setup storage!');
     }
 
+    public function testSetupItems(): void
+    {
+        $manager = new Manager();
+
+        $items = [
+            'item1' => new Item(),
+            'item2' => new Item(),
+        ];
+        $manager->setItems($items);
+        $this->assertEquals($items, $manager->getItems(), 'Unable to setup items!');
+
+        $manager->setItems([
+            'test_id' => [
+                'path' => 'test/path',
+            ],
+        ]);
+        $normalizedItems = $manager->getItems();
+
+        $this->assertFalse(empty($normalizedItems['test_id']));
+        $this->assertSame('test_id', $normalizedItems['test_id']->id);
+    }
+
     /**
-     * @depends testSetGet
+     * @depends testSetupStorage
      */
     public function testGetDefaultStorage(): void
     {
@@ -88,7 +103,7 @@ class ManagerTest extends TestCase
     }
 
     /**
-     * @depends testSetGet
+     * @depends testSetupItems
      */
     public function testGetItemById(): void
     {

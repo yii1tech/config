@@ -195,7 +195,7 @@ class ConfigController extends CController
         /* @var $configManager \yii1tech\config\Manager */
         $configManager = Yii::app()->get('configManager');
         
-        $configManager->restoreValues();
+        $configManager->restore();
 
         $models = $configManager->getItems();
 
