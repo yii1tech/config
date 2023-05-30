@@ -86,6 +86,11 @@ $configManager = Yii::app()->get('configManager');
 $configManager->configure(Yii::app());
 ```
 
+**Heads up!** Behavior `yii1tech\config\ConfiguresAppFromConfigManager` automatically suppresses any error or exception, which appears during values restoration.
+This is done to avoid application blocking in case storage is not yet ready for usage, for example: database table does not yet exist.
+Storage failure error will appear only at the application log. You should manually test value restoration is working at your application
+to avoid unexpected behavior.
+
 
 ## Configuration items specification <span id="configuration-items-specification"></span>
 
@@ -101,56 +106,62 @@ configuration item id (name of key in `\yii1tech\config\Manager::$items` array).
 Configuration item may also have several properties, which supports creation of web interface for configuration setup.
 These are:
 
+- 'path' - array|string, application component config path.
 - 'label' - string, input label.
 - 'description' - string, configuration parameter description or input hint.
 - 'rules' - array, value validation rules.
-- 'inputOptions' - array, list of any other input options.
+- 'cast' - string, native type for the value to be cast to.
+- 'options' - array, additional descriptive options for this item.
+
+> Tip: since runtime configuration may consist of many items and their declaration may cost a lot of code, it can
+  be moved into a separated file and specified by this file name.
 
 Here are some examples of item specifications:
 
 ```php
-'appName' => [
-    'path' => 'name',
-    'label' => 'Application Name',
-    'rules' => [
-        ['required'],
-        ['string'],
-    ],
-],
-'nullDisplay' => [
-    'path' => 'components.format.dateFormat',
-    'label' => 'Date representation format',
-    'rules' => [
-        ['required'],
-        ['string'],
-    ],
-],
-'adminEmail' => [
-    'label' => 'Admin email address',
-    'rules' => [
-        ['required'],
-        ['email'],
-    ],
-],
-'adminTheme' => [
-    'label' => 'Admin interface theme',
-    'path' => ['modules', 'admin', 'theme'],
-    'rules' => [
-        ['required'],
-        ['in', 'range' => ['classic', 'bootstrap']],
-    ],
-    'options' => [
-        'type' => 'dropDown',
-        'items' => [
-            'classic' => 'Classic',
-            'bootstrap' => 'Twitter Bootstrap',
+<?php
+
+return [
+    'appName' => [
+        'path' => 'name',
+        'label' => 'Application Name',
+        'rules' => [
+            ['required'],
+            ['string'],
         ],
     ],
-],
+    'nullDisplay' => [
+        'path' => 'components.format.dateFormat',
+        'label' => 'Date representation format',
+        'rules' => [
+            ['required'],
+            ['string'],
+        ],
+    ],
+    'adminEmail' => [
+        'label' => 'Admin email address',
+        'rules' => [
+            ['required'],
+            ['email'],
+        ],
+    ],
+    'adminTheme' => [
+        'label' => 'Admin interface theme',
+        'path' => ['modules', 'admin', 'theme'],
+        'rules' => [
+            ['required'],
+            ['in', 'range' => ['classic', 'bootstrap']],
+        ],
+        'options' => [
+            'type' => 'dropDown',
+            'items' => [
+                'classic' => 'Classic',
+                'bootstrap' => 'Twitter Bootstrap',
+            ],
+        ],
+    ],
+];
 ```
-
-> Tip: since runtime configuration may consist of many items and their declaration may cost a lot of code, it can
-be moved into a separated file and specified by this file name.
 
 
 ## Configuration storage <span id="configuration-storage"></span>

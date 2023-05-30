@@ -50,10 +50,14 @@ class Item extends CModel
      * @var string|array application config path. Path is sequence of the config array keys.
      * It could be either a string, where keys are separated by '.', or an array of keys.
      * For example:
+     *
+     * ```
      * 'params.myparam';
-     * array('params', 'myparam');
+     * ['params', 'myparam'];
      * 'components.securityManager.validationKey';
-     * array('components', 'securityManager', 'validationKey');
+     * ['components', 'securityManager', 'validationKey'];
+     * ```
+     *
      * If path is not set it will point to {@see \CApplication::$params} with the key equals ot {@see $id}.
      */
     public $path;
