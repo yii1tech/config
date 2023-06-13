@@ -6,7 +6,7 @@
     <br>
 </p>
 
-This extension introduces persistent configuration repository for Laravel.
+This extension introduces persistent configuration repository for Yii 1.
 Its usage in particular provides support for application runtime configuration, loading config from database.
 
 For license information check the [LICENSE](LICENSE.md)-file.
@@ -86,8 +86,8 @@ $configManager = Yii::app()->get('configManager');
 $configManager->configure(Yii::app());
 ```
 
-**Heads up!** Behavior `yii1tech\config\ConfiguresAppFromConfigManager` automatically suppresses any error or exception, which appears during values restoration.
-This is done to avoid application blocking in case storage is not yet ready for usage, for example: database table does not yet exist.
+**Heads up!** Behavior `yii1tech\config\ConfiguresAppFromConfigManager` automatically suppresses any error or exception, which appears during values
+restoration. This is done to avoid application blocking in case storage is not yet ready for usage, for example: database table does not yet exist.
 Storage failure error will appear only at the application log. You should manually test value restoration is working at your application
 to avoid unexpected behavior.
 
@@ -162,6 +162,9 @@ return [
     ],
 ];
 ```
+
+> Tip: there is no need to prepare data for particualr item inside the storage. If it is missing the value will be picked from current
+  related application configuration. Thus, you can add and remove config items freely without extra action, like DB migration, involved. 
 
 
 ## Configuration storage <span id="configuration-storage"></span>
